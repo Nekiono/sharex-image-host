@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const tokens = process.env.IMAGE_AUTH.split(',').map(i => i.trim());
 
 require('dotenv').config();
 
@@ -33,7 +34,7 @@ app.get('/', (req, res) => {
 
 app.post('/upload', (req, res) => {
 
-	if (req.headers.authorization !== process.env.IMAGE_AUTH) {
+	if (!tokens.includes(req.headers.authorization)) {
 		return res
 			.status(401)
 			.send({ code: 401, message: 'Invalid authentication credentials!' });
@@ -49,7 +50,7 @@ app.post('/upload', (req, res) => {
 
 app.delete('/:file', (req, res) => {
 
-	if (req.headers.authorization !== process.env.IMAGE_AUTH) {
+	if (!tokens.includes(req.headers.authorization)) {
 		return res
 			.status(401)
 			.send({ code: 401, message: 'Invalid authentication credentials!' });
